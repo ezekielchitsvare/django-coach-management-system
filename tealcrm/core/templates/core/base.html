@@ -1,0 +1,40 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'main-ui.css' %}">
+
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+
+  <body class="min-h-screen bg-slate-900 text-white">
+    
+    {% include 'core/partials/nav.html' %}
+
+    {% if messages %}
+        <div class="px-6 py-6">
+            {% for message in messages %}
+                <div class="mx-auto mb-3 max-w-7xl rounded-2xl border px-5 py-4 text-sm font-medium shadow-lg shadow-slate-950/20
+                    {% if 'success' in message.tags %}
+                        border-emerald-500/30 bg-emerald-500/10 text-emerald-100
+                    {% elif 'error' in message.tags %}
+                        border-rose-500/30 bg-rose-500/10 text-rose-100
+                    {% elif 'warning' in message.tags %}
+                        border-amber-500/30 bg-amber-500/10 text-amber-100
+                    {% else %}
+                        border-teal-500/30 bg-teal-500/10 text-teal-100
+                    {% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% include 'core/partials/footer.html' %}
+  </body>
+</html>

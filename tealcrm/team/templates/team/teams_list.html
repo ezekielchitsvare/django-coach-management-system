@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Teams{% endblock %}
+
+{% block content %}
+    <div class="px-6 py-6 text-white">
+        <h1 class="mb-6 text-2xl font-bold">Teams</h1>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {% for row in team_rows %}
+                {% with team=row.team membership=row.membership %}
+                <div class="{% if team == active_team %}border-teal-500/40 bg-slate-800{% else %}border-slate-700 bg-slate-900{% endif %} rounded-xl border p-6 shadow">
+                    <div class="mb-4 flex items-center justify-between gap-3">
+                        <h2 class="text-xl font-semibold">{{ team.name }}</h2>
+                        {% if membership %}
+                            <span class="rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]
+                                {% if membership.role == 'owner' %}bg-teal-500/15 text-teal-300{% elif membership.role == 'admin' %}bg-sky-500/15 text-sky-300{% else %}bg-slate-700 text-slate-300{% endif %}">
+                                {{ membership.get_role_display }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                {% if team == active_team %}
+                    <a href="{% url 'team:detail' team.id %}" class="inline-block rounded-xl bg-teal-600 px-4 py-3 text-sm font-semibold text-white">Team details</a>
+                {% else %}
+                    <a href="{% url 'team:activate' team.id %}" class="inline-block rounded-xl bg-slate-800 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-700">Activate team</a>
+                {% endif %}
+                </div>
+                {% endwith %}
+            {% endfor %}    
+        </div>
+    </div>
+{% endblock %}             

@@ -1,0 +1,147 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ team.name }}{% endblock %}
+
+{% block content %}
+<div class="px-6 py-6 text-white">
+    <div class="mx-auto max-w-5xl space-y-6">
+        <div class="rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-lg shadow-slate-950/30">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <p class="text-sm font-semibold text-teal-400">Team Workspace</p>
+                    <h1 class="mt-2 text-3xl font-bold">{{ team.name }}</h1>
+                    <p class="mt-2 text-sm text-slate-400">
+                        Owner: {{ team.created_by.username }}
+                        <span class="ml-2 inline-flex rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+                            Plan: {{ current_plan.name }}
+                        </span>
+                        {% if current_team_membership %}
+                            <span class="ml-2 inline-flex rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+                                Your role: {{ current_team_membership.get_role_display }}
+                            </span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <a href="{% url 'team:list' %}" class="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-800">
+                        Switch team
+                    </a>
+
+                    {% if can_manage_team_for_team %}
+                        <a href="{% url 'team:edit' team.id %}" class="rounded-xl bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
+                            Edit team
+                        </a>
+                    {% endif %}
+
+                    {% if can_manage_members_for_team %}
+                        <a href="{% url 'team:add_member' team.id %}" class="rounded-xl bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-teal-400">
+                            Add member
+                        </a>
+                    {% endif %}
+
+                    {% if can_manage_billing_for_team %}
+                        <a href="{% url 'team:upgrade' %}" class="rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-500">
+                            Manage plan
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if not is_active_team %}
+                <p class="mt-4 text-sm text-slate-400">
+                    Activate this team from the team switcher to manage members, roles, or billing.
+                </p>
+            {% endif %}
+
+            {% if is_active_team and not team_roles_enabled %}
+                <div class="mt-4 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3">
+                    <p class="text-sm text-slate-400">{{ team_roles_message }}</p>
+                </div>
+            {% endif %}
+
+            {% if is_active_team and current_team_membership and current_team_membership.role == 'member' %}
+                <div class="mt-4 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3">
+                    <p class="text-sm text-slate-400">
+                        You're a member of this team. Ask an owner or admin to manage team settings.
+                    </p>
+                </div>
+            {% elif is_active_team and not can_manage_billing_for_team %}
+                <div class="mt-4 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3">
+                    <p class="text-sm text-slate-400">
+                        Only the team owner can change this plan.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-lg shadow-slate-950/30">
+            <div class="mb-4 flex items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-white">Team members</h2>
+                    <p class="mt-1 text-sm text-slate-400">Owners manage billing, admins help manage members, and members use the CRM.</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                {% for row in member_rows %}
+                    {% with membership=row.membership %}
+                        <div class="rounded-xl border border-slate-700 bg-slate-800/70 p-4">
+                            <div class="flex flex-wrap items-center justify-between gap-4">
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-3">
+                                        <p class="text-base font-semibold text-white">{{ membership.user.username }}</p>
+                                        <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]
+                                            {% if membership.role == 'owner' %}bg-teal-500/15 text-teal-300{% elif membership.role == 'admin' %}bg-sky-500/15 text-sky-300{% else %}bg-slate-700 text-slate-300{% endif %}">
+                                            {{ membership.get_role_display }}
+                                        </span>
+                                        {% if membership.user == request.user %}
+                                            <span class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">You</span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mt-2 text-sm text-slate-400">
+                                        Joined {{ membership.joined_at|date:"M j, Y, g:i A" }}
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2">
+                                    {% if row.can_promote %}
+                                        <form method="post" action="{% url 'team:promote_member' team.id membership.user.id %}">
+                                            {% csrf_token %}
+                                            <button class="rounded-xl bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-teal-400">
+                                                Promote to admin
+                                            </button>
+                                        </form>
+                                    {% endif %}
+
+                                    {% if row.can_demote %}
+                                        <form method="post" action="{% url 'team:demote_member' team.id membership.user.id %}">
+                                            {% csrf_token %}
+                                            <button class="rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-700">
+                                                Demote to member
+                                            </button>
+                                        </form>
+                                    {% endif %}
+
+                                    {% if row.can_remove %}
+                                        <form method="post" action="{% url 'team:remove_member' team.id membership.user.id %}">
+                                            {% csrf_token %}
+                                            <button class="rounded-xl border border-rose-500/40 px-4 py-2 text-sm font-semibold text-rose-300 hover:bg-rose-500/10">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% empty %}
+                    <div class="rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-8 text-center">
+                        <p class="text-sm font-semibold text-white">No team members yet.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

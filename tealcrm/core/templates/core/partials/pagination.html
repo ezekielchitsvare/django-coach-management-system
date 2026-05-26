@@ -1,0 +1,33 @@
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+    <div class="mt-6 flex flex-col gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-4 text-sm text-slate-300 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-slate-400">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </p>
+
+        <div class="flex items-center gap-2">
+            {% if page_obj.has_previous %}
+                <a href="{% querystring page=page_obj.previous_page_number %}" class="inline-flex rounded-xl border border-slate-700 px-4 py-2 font-semibold text-slate-300 transition hover:border-teal-400 hover:text-white">
+                    Previous
+                </a>
+            {% else %}
+                <span class="inline-flex rounded-xl border border-slate-800 px-4 py-2 font-semibold text-slate-600">
+                    Previous
+                </span>
+            {% endif %}
+
+            <span class="inline-flex rounded-xl bg-teal-500 px-4 py-2 font-semibold text-slate-950">
+                {{ page_obj.number }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="{% querystring page=page_obj.next_page_number %}" class="inline-flex rounded-xl border border-slate-700 px-4 py-2 font-semibold text-slate-300 transition hover:border-teal-400 hover:text-white">
+                    Next
+                </a>
+            {% else %}
+                <span class="inline-flex rounded-xl border border-slate-800 px-4 py-2 font-semibold text-slate-600">
+                    Next
+                </span>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

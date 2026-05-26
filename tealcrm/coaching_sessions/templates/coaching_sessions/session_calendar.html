@@ -1,0 +1,127 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+
+{% block title %}Calendar{% endblock %}
+
+{% block content %}
+<div class="py-6 px-6">
+    <div class="rounded-2xl border border-slate-600 bg-slate-900 p-6 text-white">
+        {% if next_url %}
+            <a href="{{ next_url }}"
+               class="mb-4 inline-flex rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-800">
+                &larr; Back
+            </a>
+        {% endif %}
+
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <p class="text-sm font-semibold text-teal-400">Coaching Sessions</p>
+                <h1 class="text-3xl font-bold">{{ month_label }}</h1>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'sessions:add' %}?next={{ request|current_url|urlencode }}" class="rounded-xl bg-teal-500 px-4 py-2 font-semibold text-white">
+                    Add Session
+                </a>
+                <a href="{% url 'sessions:dashboard' %}?next={{ request|current_url|urlencode }}"
+                   class="rounded-xl px-4 py-2 {% if can_access_analytics %}border border-slate-400 text-white hover:bg-slate-700{% else %}border border-slate-700 bg-slate-800 text-slate-400{% endif %}">
+                    {% if can_access_analytics %}Analytics{% else %}Analytics locked{% endif %}
+                </a>
+                <a href="{% url 'sessions:calendar' %}?month={{ today_month }}&year={{ today_year }}{% if current_status %}&status={{ current_status }}{% endif %}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}" class="rounded-xl border border-slate-400 px-4 py-2 text-white">
+                    Today
+                </a>
+                <a href="?month={{ prev_month }}&year={{ prev_year }}{% if current_status %}&status={{ current_status }}{% endif %}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}" class="rounded-xl border border-slate-400 px-4 py-2 text-white">
+                    Prev
+                </a>
+                <a href="?month={{ next_month }}&year={{ next_year }}{% if current_status %}&status={{ current_status }}{% endif %}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}" class="rounded-xl border border-slate-400 px-4 py-2 text-white">
+                    Next
+                </a>
+                <a href="{% url 'sessions:list' %}?{% if current_status %}status={{ current_status }}&{% endif %}next={{ request|current_url|urlencode }}" class="rounded-xl border border-slate-400 px-4 py-2 text-white">
+                    List View
+                </a>
+            </div>
+        </div>
+
+        <div class="mb-6 flex flex-wrap gap-2">
+            {% for filter in status_filters %}
+                <a href="{% url 'sessions:calendar' %}?month={{ month }}&year={{ year }}{% if filter.value %}&status={{ filter.value }}{% endif %}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}"
+                   class="rounded-xl px-4 py-2 {% if current_status == filter.value or not current_status and not filter.value %}{% if filter.value == 'planned' %}bg-yellow-500 text-black{% elif filter.value == 'completed' %}bg-green-500 text-white{% elif filter.value == 'cancelled' %}bg-red-500 text-white{% else %}bg-teal-500 text-white{% endif %}{% else %}bg-slate-700 text-white{% endif %}">
+                    {{ filter.label }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="mb-2 grid grid-cols-7 gap-2 text-white">
+            {% for weekday in weekdays %}
+                <div class="text-center font-bold">{{ weekday }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="grid grid-cols-7 gap-2">
+            {% for week in calendar_weeks %}
+                {% for day in week %}
+                    <div data-url="{% url 'sessions:add' %}?date={{ day.date|date:'Y-m-d' }}&next={{ request|current_url|urlencode }}"
+                         onclick="window.location.href=this.dataset.url"
+                         class="group min-h-[130px] cursor-pointer rounded-xl border border-slate-600 p-3 hover:bg-slate-700 {% if not day.is_current_month %}bg-slate-900 text-gray-500{% else %}bg-slate-800 text-white{% endif %} {% if day.is_today %}ring-2 ring-teal-400{% endif %}">
+                        <div class="text-[10px] text-gray-400 opacity-0 transition group-hover:opacity-100">
+                            Click to add session
+                        </div>
+                        <div class="mb-2 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="relative group/day">
+                                    <a href="{% url 'sessions:day' %}?date={{ day.date|date:'Y-m-d' }}&next={{ request|current_url|urlencode }}"
+                                       onclick="event.stopPropagation()"
+                                       class="font-semibold hover:text-sky-300">
+                                        {{ day.date.day }}
+                                    </a>
+
+                                    <div class="absolute left-0 top-6 whitespace-nowrap rounded bg-slate-700 px-2 py-1 text-[10px] text-white opacity-0 shadow transition group-hover/day:opacity-100">
+                                        View agenda
+                                    </div>
+                                </div>
+
+                                {% if day.is_today %}
+                                    <span class="rounded-full bg-teal-500/20 px-2 py-0.5 text-[10px] font-semibold text-teal-300">
+                                        Today
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            {% if day.is_current_month %}
+                                <a href="{% url 'sessions:add' %}?date={{ day.date|date:'Y-m-d' }}&next={{ request|current_url|urlencode }}"
+                                   onclick="event.stopPropagation()"
+                                   class="rounded-lg px-2 py-1 text-xs font-semibold text-teal-300 hover:bg-teal-500/10 hover:text-teal-200">
+                                    +
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        {% for session in day.sessions %}
+                            <a href="{% url 'sessions:detail' session.id %}?next={{ request|current_url|urlencode }}" onclick="event.stopPropagation()" class="block">
+                                <div class="mb-2 rounded-lg bg-slate-700 p-2 hover:bg-slate-600">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <p class="text-xs text-gray-300">
+                                            {{ session.session_date|time:"H:i" }}
+                                        </p>
+
+                                        <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold {% if session.status == 'planned' %}bg-yellow-400 text-slate-950{% elif session.status == 'completed' %}bg-green-500 text-white{% else %}bg-red-500 text-white{% endif %}">
+                                            {{ session.get_status_display }}
+                                        </span>
+                                    </div>
+
+                                    <p class="text-xs font-bold">
+                                        {{ session.title }}
+                                    </p>
+                                    <p class="text-xs text-gray-300">
+                                        {{ session.client.name }}
+                                    </p>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

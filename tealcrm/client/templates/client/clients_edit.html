@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Edit client{% endblock %}
+
+{% block content %}
+<div class="px-6 py-8">
+    <div class="mx-auto max-w-5xl">
+        {% url 'clients:detail' client.id as client_detail_url %}
+        {% if next_url %}
+            {% include 'core/partials/page_header.html' with eyebrow='Client management' title='Edit Client' description='Refine this client record with clean details, notes, and contact information.' back_url=next_url back_label='Back' %}
+        {% else %}
+            {% include 'core/partials/page_header.html' with eyebrow='Client management' title='Edit Client' description='Refine this client record with clean details, notes, and contact information.' back_url=client_detail_url back_label='Back to client' %}
+        {% endif %}
+
+        <div class="rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-xl shadow-slate-950/20">
+            <form method="post" action="." class="space-y-6 text-slate-200">
+                {% csrf_token %}
+                {% if next_url %}
+                    <input type="hidden" name="next" value="{{ next_url }}">
+                {% endif %}
+                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+
+                {% if form.non_field_errors %}
+                    <div class="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm text-rose-100">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="grid gap-5 md:grid-cols-2">
+                    {% include 'core/partials/form_field.html' with field=form.name %}
+                    {% include 'core/partials/form_field.html' with field=form.email %}
+                </div>
+
+                {% include 'core/partials/form_field.html' with field=form.description %}
+
+                <div class="flex flex-wrap gap-3 border-t border-slate-800 pt-2">
+                    <button class="inline-flex items-center justify-center rounded-xl bg-teal-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-teal-950/30 transition duration-200 hover:-translate-y-px hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400/60">
+                        Save changes
+                    </button>
+                    <a href="{% if next_url %}{{ next_url }}{% else %}{{ client_detail_url }}{% endif %}"
+                       class="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-200 transition duration-200 hover:-translate-y-px hover:border-slate-500 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-400/60">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

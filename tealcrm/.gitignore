@@ -1,0 +1,10 @@
+venv/
+.env
+*.testcopy
+*.sqlite3
+*.sqlite3-journal
+__pycache__/
+*.pyc
+media/
+staticfiles/
+.DS_Store

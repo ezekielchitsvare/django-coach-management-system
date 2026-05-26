@@ -1,0 +1,128 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+
+{% block title %}{{ client.name }}{% endblock %}
+
+{% block content %}
+    <div class="py-6 px-6">
+             {% if next_url %}
+                 <a href="{{ next_url }}"
+                    class="mb-4 inline-flex rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-800">
+                     &larr; Back
+                 </a>
+             {% endif %}
+
+             <h1 class="mb-1 text-xl">{{ client.name }}</h1>
+
+                <p class="text-sm text-gray-400">
+                    {{ client.email|default_if_none:"No email"|default:"No email" }}
+                </p>
+
+             {% if client.description %}
+                 <p class="font-semibold">Description</p>
+                 <p class="mb-2">{{ client.description }}</p>
+             {% endif %}
+
+             <p class="font-semibold">Created at</p>
+             <p class="mb-2">{{ client.created_at }}</p>
+
+             <p class="font-semibold">Modified at</p>
+             <p class="mb-2">{{ client.modified_at }}</p>
+
+             <div class="flex flex-wrap items-center gap-2">
+                 <a href="{% url 'clients:edit' client.id %}?next={{ request|current_url|urlencode }}" class="py-2 px-4 rounded-xl bg-teal-500 text-white">Edit</a>
+                 <a href="{% url 'clients:delete' client.id %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" class="py-2 px-4 rounded-xl bg-red-500 text-white">Delete</a>
+             </div>
+
+             <hr class="my-4">
+
+            <h2 class="mb-6 text-2xl">Internal Notes</h2>
+
+            <div class="space-y-6">
+                {% for comment in client.comments.all %}
+                    <div class="mb-6 bg-white py-6 px-6 rounded-xl text-gray-900 shadow">
+                        <p class="mb-2 text-sm text-gray-600">
+                            <strong class="text-gray-900">{{ comment.created_by.username }}</strong> @ {{ comment.created_at }}
+                        </p>
+
+                        <p class="text-base leading-relaxed text-gray-800">{{ comment.content }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-gray-300">No notes yet.</p>
+                {% endfor %}
+            </div>
+
+             <form method="post" action="{% url 'clients:add_comment' client.id %}" class="mt-6 space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request|current_url }}">
+
+                <div class="rounded-xl bg-slate-800 p-4">
+                    {{ form.as_p }}
+                </div>
+
+                <button class="py-2 px-4 rounded-xl bg-teal-500 text-white">Submit</button>
+             </form>
+
+             <hr class="my-4">
+
+             <hr class="my-4">
+
+            <h2 class="mb-6 text-xl">Sessions</h2>
+
+            <a href="{% url 'sessions:add' %}?client={{ client.id }}&next={{ request|current_url|urlencode }}"
+               class="inline-block mb-6 py-2 px-4 rounded-xl bg-teal-500 text-white">
+                Add Session
+            </a>
+            <div class="space-y-4">
+                {% for session in sessions %}
+                    <a href="{% url 'sessions:detail' session.id %}?next={{ request|current_url|urlencode }}">
+                        <div class="bg-slate-800 text-white p-4 rounded-xl shadow hover:bg-slate-700 transition">
+                            <p class="text-sm text-gray-300">{{ session.session_date }}</p>
+                            <h3 class="font-bold">{{ session.title }}</h3>
+                            <p>Status: {{ session.get_status_display }}</p>
+                        </div>
+                    </a>
+                {% empty %}
+                    <p class="text-gray-300">No sessions yet.</p>
+                {% endfor %}
+            </div>
+
+             <h2 class="mb-6 text-xl">Files</h2>
+
+             <div class="space-y-4">
+                {% for file in client.files.all %}
+                <div class="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-white py-6 px-6 text-gray-900 shadow">
+                    <div>
+                        <p class="mb-1 text-sm text-gray-600">
+                            <strong class="text-gray-900">{{ file.created_by }}</strong> @ {{ file.created_at }}
+                        </p>
+                        <p class="text-sm font-medium text-gray-800">{{ file.file.name }}</p>
+                    </div>
+
+                    <a href="{{ file.file.url }}" class="inline-block rounded-xl bg-teal-500 py-2 px-4 font-semibold text-white hover:bg-teal-600">
+                        Download
+                    </a>
+                </div>
+                {% empty %}
+                <p class="text-gray-300">No files uploaded yet.</p>
+                {% endfor %}
+             </div>
+
+             <form method="post" action="{% url 'clients:add_file' client.id %}" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request|current_url }}">
+
+                <div class="rounded-xl bg-white p-6 text-gray-900 shadow">
+                    <p class="mb-3 text-sm font-semibold text-gray-700">Upload a file</p>
+                    {{ fileform.as_p }}
+                </div>
+
+                <button class="py-2 px-4 rounded-xl bg-teal-500 text-white">Submit</button>
+             </form>
+
+             <hr class="my-4">
+
+             <a href="{% if next_url %}{{ next_url }}{% else %}{% url 'clients:list' %}{% endif %}">Back to clients</a>
+
+    </div>
+{% endblock %}

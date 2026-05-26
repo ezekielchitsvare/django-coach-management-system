@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Delete Session{% endblock %}
+
+{% block content %}
+<div class="py-6 px-6">
+    {% if next_url %}
+        <a href="{% url 'sessions:detail' session.id %}?next={{ next_url|urlencode }}"
+           class="mb-4 inline-flex rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-800">
+            &larr; Back
+        </a>
+    {% endif %}
+
+    <h1 class="mb-6 text-2xl font-bold text-white">Delete Session</h1>
+
+    <div class="bg-slate-800 p-6 rounded-xl text-white shadow">
+        <p class="mb-6">
+            Are you sure you want to delete "{{ session.title }}"?
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            {% if next_url %}
+                <input type="hidden" name="next" value="{{ next_url }}">
+            {% endif %}
+
+            <button class="py-2 px-4 rounded-xl bg-red-500 text-white">
+                Yes, delete
+            </button>
+
+            <a href="{% url 'sessions:detail' session.id %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}"
+               class="inline-block py-2 px-4 rounded-xl bg-gray-500 text-white">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

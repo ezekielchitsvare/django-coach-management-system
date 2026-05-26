@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+
+{% block title %}Clients{% endblock %}
+
+{% block content %}
+<div class="px-6 py-8 text-white">
+    <div class="mx-auto max-w-7xl">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-teal-400">Customer base</p>
+                <h1 class="mt-2 text-3xl font-bold">Clients</h1>
+                <p class="mt-2 text-sm text-slate-400">{{ total_count }} total client{{ total_count|pluralize }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                <a href="{% url 'clients:add' %}?next={{ request|current_url|urlencode }}"
+                   class="inline-flex items-center justify-center rounded-xl bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-teal-950/30 transition duration-200 hover:-translate-y-px hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400/60">
+                    Add Client
+                </a>
+
+                {% if can_use_export_tools %}
+                    <a href="{% url 'clients:export' %}"
+                       class="inline-flex items-center justify-center rounded-xl border border-teal-500/30 bg-teal-500/10 px-5 py-3 text-sm font-semibold text-teal-300 transition duration-200 hover:-translate-y-px hover:bg-teal-500/20 focus:outline-none focus:ring-2 focus:ring-teal-400/60">
+                        Export Clients
+                    </a>
+                {% else %}
+                    <a href="{% url 'clients:export' %}"
+                       class="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 text-sm font-semibold text-slate-400 transition duration-200 hover:-translate-y-px hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-400/60">
+                        Export tools locked
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="get" class="mt-6 rounded-2xl border border-slate-700 bg-slate-900 p-4 shadow-lg shadow-slate-950/20">
+            <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+                <div>
+                    <label for="client-search" class="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Search</label>
+                    <input
+                        id="client-search"
+                        type="text"
+                        name="q"
+                        value="{{ q }}"
+                        placeholder="Search by client name"
+                        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-teal-400"
+                    >
+                </div>
+
+                <div class="flex items-end gap-2">
+                    <button class="inline-flex rounded-xl bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-teal-400">
+                        Apply
+                    </button>
+                    <a href="{% url 'clients:list' %}" class="inline-flex rounded-xl border border-slate-700 px-4 py-3 text-sm font-semibold text-slate-300 transition hover:bg-slate-800">
+                        Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        {% if clients %}
+            <div class="mt-6 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-xl shadow-slate-950/20">
+                <div class="hidden md:block">
+                    <table class="min-w-full divide-y divide-slate-800 text-left text-sm text-slate-300">
+                        <thead class="bg-slate-950/70 text-xs uppercase tracking-[0.18em] text-slate-400">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold">Name</th>
+                                <th class="px-6 py-4 font-semibold">Created date</th>
+                                <th class="px-6 py-4 font-semibold">Sessions</th>
+                                <th class="px-6 py-4 font-semibold">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            {% for client in clients %}
+                                <tr class="transition duration-150 hover:bg-slate-800/70">
+                                    <td class="px-6 py-4">
+                                        <a href="{% url 'clients:detail' client.id %}?next={{ request|current_url|urlencode }}"
+                                           class="font-semibold text-white transition hover:text-teal-300">
+                                            {{ client.name }}
+                                        </a>
+                                        <p class="mt-1 text-xs text-slate-500">{{ client.email|default:"No email" }}</p>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-400">{{ client.created_at|date:"M j, Y" }}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex rounded-full bg-teal-500/15 px-3 py-1 text-xs font-semibold text-teal-300">
+                                            {{ client.session_count }} session{{ client.session_count|pluralize }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-wrap gap-2">
+                                            <a href="{% url 'clients:detail' client.id %}?next={{ request|current_url|urlencode }}" class="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-teal-400 hover:text-white">View</a>
+                                            <a href="{% url 'clients:edit' client.id %}?next={{ request|current_url|urlencode }}" class="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-teal-400 hover:text-white">Edit</a>
+                                            <a href="{% url 'clients:delete' client.id %}?next={{ request|current_url|urlencode }}" class="rounded-lg border border-rose-500/40 px-3 py-2 text-xs font-semibold text-rose-300 transition hover:bg-rose-500/10">Delete</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="divide-y divide-slate-800 md:hidden">
+                    {% for client in clients %}
+                        <div class="space-y-4 p-5 transition duration-150 hover:bg-slate-800/70">
+                            <div>
+                                <a href="{% url 'clients:detail' client.id %}?next={{ request|current_url|urlencode }}"
+                                   class="text-base font-semibold text-white transition hover:text-teal-300">
+                                    {{ client.name }}
+                                </a>
+                                <p class="mt-1 text-sm text-slate-400">{{ client.created_at|date:"M j, Y" }}</p>
+                                <p class="mt-2 text-sm text-slate-500">{{ client.email|default:"No email" }}</p>
+                            </div>
+
+                            <div>
+                                <span class="inline-flex rounded-full bg-teal-500/15 px-3 py-1 text-xs font-semibold text-teal-300">
+                                    {{ client.session_count }} session{{ client.session_count|pluralize }}
+                                </span>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{% url 'clients:detail' client.id %}?next={{ request|current_url|urlencode }}" class="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-teal-400 hover:text-white">View</a>
+                                <a href="{% url 'clients:edit' client.id %}?next={{ request|current_url|urlencode }}" class="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-teal-400 hover:text-white">Edit</a>
+                                <a href="{% url 'clients:delete' client.id %}?next={{ request|current_url|urlencode }}" class="rounded-lg border border-rose-500/40 px-3 py-2 text-xs font-semibold text-rose-300 transition hover:bg-rose-500/10">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% include 'core/partials/pagination.html' %}
+        {% else %}
+            <div class="mt-6 rounded-2xl border border-dashed border-slate-700 bg-slate-900 px-6 py-12 text-center">
+                <p class="text-lg font-semibold text-white">No clients found.</p>
+                <p class="mt-2 text-sm text-slate-400">Try a different search or add a client to start building your roster.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

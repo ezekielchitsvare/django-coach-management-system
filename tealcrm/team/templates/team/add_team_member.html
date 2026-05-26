@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Add Team Member{% endblock %}
+
+{% block content %}
+<div class="px-6 py-6">
+    <div class="mx-auto max-w-2xl">
+        <h1 class="mb-2 text-2xl font-bold text-white">Add Team Member</h1>
+        <p class="mb-6 text-sm text-slate-400">
+            New teammates join <span class="font-semibold text-white">{{ team.name }}</span> as members by default.
+        </p>
+
+        <div class="rounded-xl border border-slate-700 bg-slate-800 p-6 text-white shadow">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <div class="flex flex-wrap gap-3">
+                    <button class="rounded-xl bg-teal-500 px-5 py-3 font-semibold text-slate-950 hover:bg-teal-400">
+                        Add Member
+                    </button>
+                    <a href="{% url 'team:detail' team.id %}" class="rounded-xl border border-slate-600 px-5 py-3 font-semibold text-slate-200 hover:bg-slate-700">
+                        Back to team
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

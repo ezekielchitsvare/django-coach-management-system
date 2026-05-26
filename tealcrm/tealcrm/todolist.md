@@ -1,0 +1,60 @@
+todolist
+-DONE Create virtual environment,install django and create project
+-DONE Base pages /templates
+  -DONE Create app for pages
+  -DONE Create base templates
+  -DONE Create front page
+  -DONE Create about page
+-DONE Authentication
+  -DONE create database model for userprofiles
+  -DONE Make it possible to sign up
+  -DONE Make it possible to log in
+  -DONE Make it possible to log out
+-DONE Simple dashboard
+-DONE Create new leads
+   -DONE New Django app
+   -DONE Database models
+   -DONE Views/Forms for leads
+   -DONE List out leads
+   -DONE View detail page of leads
+
+-DONE Change and Delete Leads
+-DONE Convert Leads to clients
+-DONE Show  a list of clients
+-DONE Show a detail page of client
+-DONE Add client
+-DONE Change and delete clients
+-DONE Implement solution for teams
+  -DONE Create teams app
+  -DONE Model for teams
+  -DONE When you create a lead make sure team is set
+  -DONE When you create a client make sure team is set
+  -DONE If you are not a member of the team create one
+  -DONE If you are the owner make it possible to edit team
+  -DONE Limit number of leads
+  -DONE Limit number of clients
+ -Refactoring 
+  -DONE Install Tailwind instead of CDN
+  -DONE Add name spaces to all of the app
+  -DONE Replace the leads list with a class based view
+  -DONE Replace the leads detail with a class based view
+  -DONE Replace the leads delete with a class based view
+  -DONE Replace the leads edit with a class based view
+  -DONE Replace the leads add with a class based view
+    -DONE And give it a better name
+  -DONE Replace the leads convert with a class based view
+  -DONE Upload files to leads and clients  
+  -DONE Export information (leads, clients)
+  -DONE Replace the dispatch with loginrequiredmixin
+  -DONE Show active team in menu
+  -DONE Team detail page  with member list
+  -DONE Clean up base.html with includes
+  -DONE Fix styling for login and signup
+  -DONE sure the team does need to have a plan(then automatically free)
+  -DONE Add extra field to userprofile to keep track of active team
+  -DONE Make it possible to swicth team
+      -DONE Make sure every hardcoded team selector is replaced
+  -DONE Show plan usage  visible plan details an upgrade path users can click 
+  -Show current plan show limits show upgrade button in the right place
+-Implement a payment solution / Monthly reccuring payment
+-Deploy

@@ -1,0 +1,14 @@
+<div class="space-y-2">
+    <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-slate-200">
+        {{ field.label }}
+    </label>
+    {{ field }}
+    {% if field.help_text %}
+        <p class="text-xs leading-5 text-slate-500">{{ field.help_text|safe }}</p>
+    {% endif %}
+    {% for error in field.errors %}
+        <p class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+            {{ error }}
+        </p>
+    {% endfor %}
+</div>

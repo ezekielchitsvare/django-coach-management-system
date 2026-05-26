@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Pricing{% endblock %}
+
+{% block content %}
+<div class="px-6 py-10 text-white">
+    <div class="mx-auto max-w-6xl">
+        <div class="mb-8 text-center">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-teal-400">Pricing</p>
+            <h1 class="mt-2 text-4xl font-bold">Simple plans for growing teams</h1>
+            <p class="mt-3 text-sm text-slate-400">
+                Start free, then unlock higher limits and advanced workflow tools as your CRM grows.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {% for row in plan_rows %}
+                <div class="relative rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-lg shadow-slate-950/30">
+                    {% if row.is_most_popular %}
+                        <span class="absolute right-6 top-6 rounded-full bg-teal-500 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-950">
+                            Most Popular
+                        </span>
+                    {% endif %}
+
+                    <h2 class="text-2xl font-bold">{{ row.plan.name }}</h2>
+                    <p class="mt-2 min-h-[48px] text-sm text-slate-400">
+                        {{ row.plan.description|default:"No description yet." }}
+                    </p>
+
+                    <p class="mt-6 text-4xl font-bold text-white">
+                        £{{ row.plan.monthly_price }}
+                        <span class="text-sm font-medium text-slate-400">/ month</span>
+                    </p>
+
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        {% for item in row.limits %}
+                            <div class="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+                                <p class="text-xs uppercase tracking-[0.16em] text-slate-400">{{ item.label }}</p>
+                                <p class="mt-2 text-lg font-semibold text-white">{{ item.value }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-6 space-y-2">
+                        {% for feature in row.features %}
+                            <div class="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-800/40 px-3 py-2">
+                                <span class="{% if feature.enabled %}text-slate-200{% else %}text-slate-500{% endif %}">
+                                    {{ feature.label }}
+                                </span>
+                                <span class="text-sm font-semibold {% if feature.enabled %}text-teal-400{% else %}text-slate-500{% endif %}">
+                                    {% if feature.enabled %}Included{% else %}Locked{% endif %}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

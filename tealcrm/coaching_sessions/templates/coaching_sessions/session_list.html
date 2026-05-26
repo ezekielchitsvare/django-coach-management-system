@@ -1,0 +1,98 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+
+{% block title %}Sessions{% endblock %}
+
+{% block content %}
+<div class="py-6 px-6">
+    {% if next_url %}
+        <a href="{{ next_url }}"
+           class="mb-4 inline-flex rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-800">
+            &larr; Back
+        </a>
+    {% endif %}
+
+    <h1 class="mb-4 text-xl text-white">Sessions</h1>
+
+    <div class="flex flex-wrap gap-3">
+        <a href="{% url 'sessions:add' %}?{% if current_client_id %}client={{ current_client_id }}&{% endif %}next={{ request|current_url|urlencode }}"
+           class="inline-block rounded-xl bg-teal-600 px-5 py-3 text-white">
+            Add Session
+        </a>
+
+        <a href="{% url 'sessions:dashboard' %}?next={{ request|current_url|urlencode }}"
+           class="inline-block rounded-xl px-5 py-3 {% if can_access_analytics %}bg-sky-600 text-white{% else %}border border-slate-700 bg-slate-800 text-slate-400{% endif %}">
+            {% if can_access_analytics %}Analytics{% else %}Analytics locked{% endif %}
+        </a>
+
+        <a href="{% url 'sessions:calendar' %}?next={{ request|current_url|urlencode }}"
+           class="inline-block rounded-xl bg-sky-700 px-5 py-3 text-white">
+            Calendar View
+        </a>
+    </div>
+
+    <div class="mt-4 flex gap-3">
+        <a href="{% url 'sessions:list' %}{% if current_client_id or next_url %}?{% endif %}{% if current_client_id %}client={{ current_client_id }}{% endif %}{% if current_client_id and next_url %}&{% endif %}{% if next_url %}next={{ next_url|urlencode }}{% endif %}"
+           class="rounded-xl px-4 py-2 {% if not current_status %}bg-teal-500 text-white{% else %}bg-gray-600 text-white{% endif %}">
+            All
+        </a>
+
+        <a href="?status=planned{% if current_client_id %}&client={{ current_client_id }}{% endif %}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}"
+           class="rounded-xl px-4 py-2 {% if current_status == 'planned' %}bg-yellow-500 text-black{% else %}bg-gray-600 text-white{% endif %}">
+            Planned
+        </a>
+
+        <a href="?status=completed{% if current_client_id %}&client={{ current_client_id }}{% endif %}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}"
+           class="rounded-xl px-4 py-2 {% if current_status == 'completed' %}bg-green-500 text-white{% else %}bg-gray-600 text-white{% endif %}">
+            Completed
+        </a>
+
+        <a href="?status=cancelled{% if current_client_id %}&client={{ current_client_id }}{% endif %}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}"
+           class="rounded-xl px-4 py-2 {% if current_status == 'cancelled' %}bg-red-500 text-white{% else %}bg-gray-600 text-white{% endif %}">
+            Cancelled
+        </a>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        {% for session in sessions %}
+            <a href="{% url 'sessions:detail' session.id %}?next={{ request|current_url|urlencode }}">
+                <div class="cursor-pointer rounded-xl bg-slate-800 p-6 text-white shadow transition hover:bg-slate-700">
+                    <p class="text-sm text-gray-300">
+                        {{ session.session_date }}
+                    </p>
+
+                    <h2 class="mt-2 text-xl font-bold">
+                        {{ session.title }}
+                    </h2>
+
+                    <p class="mt-2">
+                        Client: {{ session.client.name }}
+                    </p>
+
+                    <p class="mt-3">
+                        {% if session.status == 'planned' %}
+                            <span style="background-color:#facc15; color:#000; padding:4px 12px; border-radius:9999px; font-size:14px; font-weight:600;">
+                                {{ session.get_status_display }}
+                            </span>
+                        {% elif session.status == 'completed' %}
+                            <span style="background-color:#22c55e; color:#fff; padding:4px 12px; border-radius:9999px; font-size:14px; font-weight:600;">
+                                {{ session.get_status_display }}
+                            </span>
+                        {% elif session.status == 'cancelled' %}
+                            <span style="background-color:#ef4444; color:#fff; padding:4px 12px; border-radius:9999px; font-size:14px; font-weight:600;">
+                                {{ session.get_status_display }}
+                            </span>
+                        {% endif %}
+                    </p>
+
+                    {% if session.notes %}
+                        <p class="mt-4 text-gray-300">
+                            {{ session.notes|truncatewords:20 }}
+                        </p>
+                    {% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

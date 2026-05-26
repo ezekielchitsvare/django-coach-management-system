@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<section class="px-6 py-12 text-white">
+    <div class="mx-auto max-w-6xl">
+        <div class="overflow-hidden rounded-[2rem] border border-slate-700 bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950/60 px-8 py-12 shadow-2xl shadow-slate-950/40 transition duration-200 hover:border-teal-500/30 hover:shadow-teal-950/20">
+            <div class="max-w-3xl">
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-teal-400">About Teal CRM</p>
+                <h1 class="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">Simple CRM for coaching teams</h1>
+                <p class="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
+                    Teal CRM helps coaches manage leads, clients, sessions, reminders, and team workflows in one place.
+                </p>
+
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <a href="{% if request.user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'login' %}{% endif %}"
+                       class="inline-flex rounded-xl bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-teal-950/30 transition duration-200 hover:-translate-y-px hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400/60">
+                        Go to Dashboard
+                    </a>
+                    <a href="{% if request.user.is_authenticated %}{% url 'team:plans' %}{% else %}{% url 'pricing' %}{% endif %}"
+                       class="inline-flex rounded-xl border border-slate-600 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-100 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-px hover:border-teal-400 hover:bg-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400/60">
+                        View Plans
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-teal-400">Core features</p>
+            <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <div class="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-1 hover:border-teal-500/30 hover:bg-slate-900/90">
+                    <h2 class="text-lg font-semibold text-white">Leads pipeline</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-400">Track new opportunities from first contact through conversion.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-1 hover:border-teal-500/30 hover:bg-slate-900/90">
+                    <h2 class="text-lg font-semibold text-white">Client management</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-400">Keep client records, notes, files, and history organized by team.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-1 hover:border-teal-500/30 hover:bg-slate-900/90">
+                    <h2 class="text-lg font-semibold text-white">Coaching sessions</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-400">Schedule, review, and document every session in one workflow.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-1 hover:border-teal-500/30 hover:bg-slate-900/90">
+                    <h2 class="text-lg font-semibold text-white">Calendar</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-400">See upcoming coaching work at a glance and stay ahead of the week.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-1 hover:border-teal-500/30 hover:bg-slate-900/90">
+                    <h2 class="text-lg font-semibold text-white">Analytics</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-400">Monitor growth, activity, and team performance with clear numbers.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-1 hover:border-teal-500/30 hover:bg-slate-900/90">
+                    <h2 class="text-lg font-semibold text-white">Alerts/reminders</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-400">Stay on top of follow-ups, upcoming sessions, and key CRM actions.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-1 hover:border-teal-500/30 hover:bg-slate-900/90 sm:col-span-2 xl:col-span-2">
+                    <h2 class="text-lg font-semibold text-white">Team roles</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-400">Collaborate with owners, coaches, and teammates while keeping work scoped to the active team.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 rounded-2xl border border-teal-500/20 bg-teal-500/10 px-6 py-5">
+            <p class="text-lg font-semibold text-white">Built for small coaching teams and service businesses</p>
+            <p class="mt-2 text-sm leading-6 text-slate-300">
+                Teal CRM keeps operations simple, professional, and easy to scale without adding a heavy frontend stack.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

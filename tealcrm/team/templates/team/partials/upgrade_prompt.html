@@ -1,0 +1,12 @@
+{% url 'team:plans' as default_upgrade_url %}
+<div class="rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-lg shadow-slate-950/30">
+    <p class="text-sm font-semibold uppercase tracking-[0.18em] text-teal-400">
+        {{ upgrade_eyebrow|default:"Upgrade" }}
+    </p>
+    <h2 class="mt-2 text-2xl font-bold text-white">{{ upgrade_title }}</h2>
+    <p class="mt-3 text-sm text-slate-400">{{ upgrade_message }}</p>
+    <a href="{{ upgrade_button_url|default:default_upgrade_url }}"
+       class="mt-5 inline-flex rounded-xl bg-teal-500 px-5 py-3 font-semibold text-slate-950 hover:bg-teal-400">
+        {{ upgrade_button_label|default:"View plans" }}
+    </a>
+</div>

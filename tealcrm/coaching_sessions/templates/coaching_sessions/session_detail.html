@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+
+{% block title %}{{ session.title }}{% endblock %}
+
+{% block content %}
+<div class="py-6 px-6">
+    {% if next_url %}
+        <a href="{{ next_url }}"
+           class="mb-4 inline-flex rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-800">
+            &larr; Back
+        </a>
+    {% endif %}
+
+    <h1 class="mb-2 text-2xl font-bold text-white">{{ session.title }}</h1>
+
+    <p class="text-gray-300 mb-4">
+        Client:
+        <a href="{% url 'clients:detail' session.client.id %}?next={{ request|current_url|urlencode }}"
+           class="hover:text-teal-400">
+            {{ session.client.name }}
+        </a>
+    </p>
+
+    <div class="bg-slate-800 p-6 rounded-xl text-white shadow">
+        <p><strong>Date:</strong> {{ session.session_date }}</p>
+        <p><strong>Duration:</strong> {{ session.duration_minutes }} minutes</p>
+        <p class="mt-2">
+        <strong>Status:</strong>
+
+        {% if session.status == 'planned' %}
+            <span class="inline-block rounded-full bg-yellow-500 px-3 py-1 text-sm font-semibold text-black">
+                {{ session.get_status_display }}
+            </span>
+        {% elif session.status == 'completed' %}
+            <span class="inline-block rounded-full bg-green-500 px-3 py-1 text-sm font-semibold text-white">
+                {{ session.get_status_display }}
+            </span>
+        {% elif session.status == 'cancelled' %}
+            <span class="inline-block rounded-full bg-red-500 px-3 py-1 text-sm font-semibold text-white">
+                {{ session.get_status_display }}
+            </span>
+        {% endif %}
+        </p>
+        <p><strong>Coach:</strong> {{ session.coach.username }}</p>
+
+        {% if session.notes %}
+            <div class="mt-4">
+                <p class="font-semibold">Notes</p>
+                <p class="text-gray-300">{{ session.notes }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-6 flex gap-3">
+        <a href="{% url 'sessions:edit' session.id %}?next={{ request|current_url|urlencode }}"
+           class="py-2 px-4 rounded-xl bg-teal-500 text-white">
+            Edit
+        </a>
+
+        <a href="{% url 'sessions:delete' session.id %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}"
+           class="py-2 px-4 rounded-xl bg-red-500 text-white">
+            Delete
+        </a>
+
+        <a href="{% if next_url %}{{ next_url }}{% else %}{% url 'sessions:list' %}{% endif %}"
+           class="py-2 px-4 rounded-xl bg-gray-500 text-white">
+            Back
+        </a>
+    </div>
+</div>
+{% endblock %}

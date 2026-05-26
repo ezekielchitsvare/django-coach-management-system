@@ -1,0 +1,83 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Plans{% endblock %}
+
+{% block content %}
+<div class="px-6 py-6 text-white">
+    <div class="mx-auto max-w-6xl">
+        {% url 'team:list' as team_list_url %}
+        {% if team %}
+            {% include 'core/partials/page_header.html' with eyebrow='Plans' title='Choose a Plan' description='Compare team limits and features before you upgrade.' back_url=team_list_url back_label='Back to teams' %}
+        {% else %}
+            {% include 'core/partials/page_header.html' with eyebrow='Plans' title='Choose a Plan' description='Compare team limits and features before you upgrade.' %}
+        {% endif %}
+
+        {% if not can_manage_billing_for_team %}
+            <div class="mb-6 rounded-2xl border border-slate-700 bg-slate-900 px-5 py-4">
+                <p class="text-sm text-slate-400">Only the team owner can change this plan.</p>
+            </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {% for row in plan_rows %}
+                <div class="relative rounded-2xl border {% if row.is_current %}border-teal-400{% else %}border-slate-700{% endif %} bg-slate-900 p-6 shadow-lg shadow-slate-950/30 transition duration-200 hover:-translate-y-1 hover:border-teal-400/60 hover:shadow-2xl hover:shadow-slate-950/30">
+                    {% if row.is_most_popular %}
+                        <span class="absolute right-6 top-6 rounded-full bg-teal-500 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-950">
+                            Most Popular
+                        </span>
+                    {% endif %}
+
+                    <h2 class="text-2xl font-bold">{{ row.plan.name }}</h2>
+                    <p class="mt-2 min-h-[48px] text-sm text-slate-400">
+                        {{ row.plan.description|default:"No description yet." }}
+                    </p>
+
+                    <p class="mt-6 text-4xl font-bold text-white">
+                        &pound;{{ row.plan.monthly_price }}
+                        <span class="text-sm font-medium text-slate-400">/ month</span>
+                    </p>
+
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        {% for item in row.limits %}
+                            <div class="rounded-xl border border-slate-700 bg-slate-800/70 p-3 transition duration-200 hover:border-slate-500 hover:bg-slate-800">
+                                <p class="text-xs uppercase tracking-[0.16em] text-slate-400">{{ item.label }}</p>
+                                <p class="mt-2 text-lg font-semibold text-white">{{ item.value }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-6 space-y-2">
+                        {% for feature in row.features %}
+                            <div class="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-800/40 px-3 py-2 transition duration-200 hover:border-slate-700 hover:bg-slate-800/70">
+                                <span class="{% if feature.enabled %}text-slate-200{% else %}text-slate-500{% endif %}">
+                                    {{ feature.label }}
+                                </span>
+                                <span class="text-sm font-semibold {% if feature.enabled %}text-teal-400{% else %}text-slate-500{% endif %}">
+                                    {% if feature.enabled %}Included{% else %}Locked{% endif %}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-6">
+                        {% if row.is_current %}
+                            <span class="inline-block rounded-xl bg-slate-700 px-4 py-2 font-semibold text-white">
+                                Current Plan
+                            </span>
+                        {% elif can_manage_billing_for_team %}
+                            <a href="{% url 'team:select_plan' row.plan.id %}"
+                               class="inline-block rounded-xl bg-teal-500 px-4 py-2 font-semibold text-slate-950 shadow-lg shadow-teal-950/30 transition duration-200 hover:-translate-y-px hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400/60">
+                                Choose Plan
+                            </a>
+                        {% else %}
+                            <span class="inline-block rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm text-slate-400">
+                                Only the team owner can change this plan.
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
