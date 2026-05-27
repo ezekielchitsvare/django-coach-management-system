@@ -38,19 +38,19 @@ git clone https://github.com/ezekielchitsvare/django-coach-management-system.git
 ## Screenshots
 
 ### Login Page
-![Login](screenshots/login.png)
+![Login](tealcrm/screenshots/login.png)
 
 ### Dashboard
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](tealcrm/screenshots/dashboard.png)
 
 ### Sessions Management
-![Coaches](screenshots/sessions.png)
+![Coaches](tealcrm/screenshots/sessions.png)
 
 ### Plans Management
-![Plans](screenshots/plans.png)
+![Plans](tealcrm/screenshots/plans.png)
 
 ### Analytics
-![Schedule](screenshots/analytics.png)
+![Schedule](tealcrm/screenshots/analytics.png)
 
 ### Calendar
-![Reports](screenshots/calendar.png)
+![Reports](tealcrm/screenshots/calendar.png)
