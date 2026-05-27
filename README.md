@@ -35,6 +35,12 @@ Currently under active development.
 ```bash
 git clone https://github.com/ezekielchitsvare/django-coach-management-system.git
 
+## Installation
+
+```bash
+git clone https://github.com/ezekielchitsvare/django-coach-management-system.git
+```
+
 ## Screenshots
 
 ### Login Page
@@ -44,13 +50,13 @@ git clone https://github.com/ezekielchitsvare/django-coach-management-system.git
 ![Dashboard](tealcrm/screenshots/dashboard.png)
 
 ### Sessions Management
-![Coaches](tealcrm/screenshots/sessions.png)
+![Sessions](tealcrm/screenshots/sessions.png)
 
 ### Plans Management
 ![Plans](tealcrm/screenshots/plans.png)
 
 ### Analytics
-![Schedule](tealcrm/screenshots/analytics.png)
+![Analytics](tealcrm/screenshots/analytics.png)
 
 ### Calendar
-![Reports](tealcrm/screenshots/calendar.png)
+![Calendar](tealcrm/screenshots/calendar.png)
