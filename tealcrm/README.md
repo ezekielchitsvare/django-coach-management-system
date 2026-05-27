@@ -34,3 +34,23 @@ Currently under active development.
 
 ```bash
 git clone https://github.com/ezekielchitsvare/django-coach-management-system.git
+
+## Screenshots
+
+### Login Page
+![Login](screenshots/login.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Sessions Management
+![Coaches](screenshots/sessions.png)
+
+### Plans Management
+![Plans](screenshots/plans.png)
+
+### Analytics
+![Schedule](screenshots/analytics.png)
+
+### Calendar
+![Reports](screenshots/calendar.png)
